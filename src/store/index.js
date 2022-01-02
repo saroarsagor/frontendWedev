@@ -3,9 +3,17 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
+    products:{},
+
     token: localStorage.getItem('accessToken') || null
   },
   getters: {
+    //product get
+    getProduct(state){
+      return state.products
+    },
+
+
     loggedIn(state){
       return state.token !==null
     }
@@ -16,6 +24,11 @@ export default createStore({
     },
     removeToken(state){
       state.token = null
+    },
+
+    //product get
+    products(state,data){
+      return state.products=data
     }
 
   },
@@ -23,7 +36,7 @@ export default createStore({
 
     //Product Create
     ProductCreate(context, data){
-      console.log(data)
+
       return new Promise((resolve, reject)=>{
         axios.post('http://127.0.0.1:8000/api/v1/product',{
           name: data.name,
@@ -40,6 +53,16 @@ export default createStore({
       })
     },
 
+    //product list
+    allProduct(context){
+      axios.get('http://127.0.0.1:8000/api/v1/product')
+        .then((res) =>{
+          console.log(res)
+          context.commit('products',res.data.data)
+        })
+
+      
+    },
 
 
     register(context, data){

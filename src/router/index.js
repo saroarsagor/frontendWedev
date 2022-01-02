@@ -48,6 +48,15 @@ const routes = [
     }
   },
 
+  {
+    path: '/edit-product/:productId',
+    name: 'edit-product',
+    component: () => import('../views/admin/Product/Productedit.vue'),
+    meta:{
+      requiresAuth: true
+    }
+  },
+
 
   {
     path: '/register',

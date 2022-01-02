@@ -6,29 +6,23 @@
         <thead class="thead-dark">
             <tr>
             <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
+            <th scope="col">Name</th>
+            <th scope="col">Price</th>
+            <th scope="col">Qty</th>
+            <th scope="col">Action</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-            </tr>
-            <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-            </tr>
-            <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
+           
+            <tr v-for="(item, index) in getAllProduct" :key="item.id">
+            <th scope="row">{{index+1}}</th>
+            <td>{{item.name}}</td>
+            <td>{{item.price}}</td>
+            <td>{{item.qty}}</td>
+             <td>
+                <router-link :to="`/edit-product/${item.id}`" class="btn btn-primary btn-sm btncss">Edit</router-link>
+                <a href="" class="btn btn-danger btn-sm" @click.prevent = "deleteProduct(item.id)">Delete</a>
+             </td>
             </tr>
         </tbody>
         </table>
@@ -39,29 +33,36 @@
 <script>
 import axios from 'axios'
 export default {
- data(){
-    	return {
-            ProductLists: [],
-        }
-    },
 
-   methods: {
-       getData(){
-                axios.get('http://127.0.0.1:8000/api/v1/product')
-                .then(response => {
-                    console.log(response);
-                    this.ProductLists=response.data;
-                })
-                .catch(e => {
-                    console.log(e);
-                })
-            },
-   },
+ mounted() {
+       this.$store.dispatch("allProduct")
+},
 
-
-    mounted() {
-       this.getData()
+computed:{
+    getAllProduct(){
+        return this.$store.getters.getProduct
     }
+},
+
+
+ methods: {
+    
+     deleteProduct(id){
+         axios.delete('http://127.0.0.1:8000/api/v1/product/'+id).then(res=>{
+             this.$store.dispatch("allProduct")
+             // eslint-disable-next-line no-undef
+            toastr.success(res.message)
+             
+         }).catch(error => {
+             // eslint-disable-next-line no-unused-vars
+             for(const[k, v] of Object.entrise(error.response.data.errors)){
+                 //eslint-disable-next-line no-undef
+                toastr.error(v)
+             }
+         })
+      }
+}
+
     
 }
 </script>
@@ -72,5 +73,5 @@ export default {
 .breadcrumb-item a{
     font-size:20px;
 }
-.breadcrumb{}
+
 </style>
